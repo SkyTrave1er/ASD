@@ -1,0 +1,2 @@
+create_project_lib(Triangle_matrix)
+add_depend(Triangle_matrix Matrix lib_matrix)

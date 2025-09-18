@@ -1,0 +1,2 @@
+create_project_lib(Math_vector)
+add_depend(Math_vector TVector lib_vector)

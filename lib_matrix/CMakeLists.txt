@@ -1,0 +1,2 @@
+create_project_lib(Matrix)
+add_depend(Matrix Math_vector lib_math_vector)
