@@ -919,7 +919,7 @@ void fisher_yates_shuffle(TVector<T>& vec) {
 
     srand(time(0));
     for (int i = size - 1; i > 0; i--) {
-        int j = rand_r() % (i + 1);
+        int j = rand() % (i + 1);
         int temp = vec[i];
         vec[i] = vec[j];
         vec[j] = temp;
