@@ -11,7 +11,7 @@ enum State { EMPTY, BUSY, DELETED };
 template <class T>
 
 class TVector {
-private:
+protected:
     T* _data = nullptr;
     size_t _capacity = 0;
     size_t _size = 0;

@@ -11,8 +11,8 @@ std::istream& operator>> (std::istream& in, const Math_vector<T>& obj);
 template <class T>
 
 class Math_vector : public TVector<T> {
-private:
-    size_t _start_index;
+protected:
+    size_t _start_index = 0;
 public:
     Math_vector();
     Math_vector(size_t size);
@@ -22,12 +22,13 @@ public:
     Math_vector<T> operator-(Math_vector<T> vec);
     Math_vector<T> operator*(T val);
     T operator*(Math_vector<T> vec);
-    Math_vector<T>& operator-=(const Math_vector<T>& vec);
-    Math_vector<T>& operator+=(const Math_vector<T>& vec);
+    Math_vector<T>& operator-=(Math_vector<T>& vec);
+    Math_vector<T>& operator+=(Math_vector<T>& vec);
     Math_vector<T>& operator*=(T val);
     Math_vector<T>& operator=(const Math_vector<T>& other);
-    bool operator==(const Math_vector<T>& other) const;
-    bool operator!=(const Math_vector<T>& other) const;
+    bool operator==(Math_vector<T>& other);
+    bool operator!=(Math_vector<T>& other);
+    T& operator[](size_t index);
     friend std::ostream& operator<< <T>(std::ostream& out, const Math_vector<T>& obj);
     friend std::istream& operator>> <T>(std::istream& in, const Math_vector<T>& obj);
 };
@@ -46,8 +47,11 @@ Math_vector<T>::Math_vector(const Math_vector<T>& other) : TVector<T>(other) {}
 
 template <class T>
 Math_vector<T> Math_vector<T>::operator+(Math_vector<T> vec) {
-    Math_vector<T> result(vec.size());
-    for (int i = 0; i < vec.size(); i++) {
+    if (this->_size != vec._size) {
+        throw std::invalid_argument("vectors must be the same size");
+    }
+    Math_vector<T> result(vec._size);
+    for (int i = 0; i < vec._size; i++) {
         result[i] = (*this)[i] + vec[i];
     }
     return result;
@@ -56,8 +60,11 @@ Math_vector<T> Math_vector<T>::operator+(Math_vector<T> vec) {
 
 template <class T>
 Math_vector<T> Math_vector<T>::operator-(Math_vector<T> vec) {
-    Math_vector<T> result(vec.size());
-    for (int i = 0; i < vec.size(); i++) {
+    if (this->_size != vec._size) {
+        throw std::invalid_argument("vectors must be the same size");
+    }
+    Math_vector<T> result(vec._size);
+    for (int i = 0; i < vec._size; i++) {
         result[i] = (*this)[i] - vec[i];
     }
     return result;
@@ -66,8 +73,8 @@ Math_vector<T> Math_vector<T>::operator-(Math_vector<T> vec) {
 
 template <class T>
 Math_vector<T> Math_vector<T>::operator*(T val) {
-    Math_vector<T> result(this->size());
-    for (int i = 0; i < this->size(); i++) {
+    Math_vector<T> result(this->_size);
+    for (int i = 0; i < this->_size; i++) {
         result[i] = (*this)[i] * val;
     }
     return result;
@@ -76,8 +83,11 @@ Math_vector<T> Math_vector<T>::operator*(T val) {
 
 template <class T>
 T Math_vector<T>::operator*(Math_vector<T> vec) {
+    if (this->_size != vec._size) {
+        throw std::invalid_argument("vectors must be the same size");
+    }
     T result = T();
-    for (int i = 0; i < vec.size(); i++) {
+    for (int i = 0; i < vec._size; i++) {
         result += (*this)[i] * vec[i];
     }
     return result;
@@ -85,24 +95,30 @@ T Math_vector<T>::operator*(Math_vector<T> vec) {
 }
 
 template <class T>
-Math_vector<T>& Math_vector<T>::operator+=(const Math_vector<T>& vec) {
-    for (size_t i = 0; i < this->size(); i++) {
-        (*this)[i] += other[i];
+Math_vector<T>& Math_vector<T>::operator+=(Math_vector<T>& vec) {
+    if (this->_size != vec._size) {
+        throw std::invalid_argument("vectors must be the same size");
+    }
+    for (size_t i = 0; i < this->_size; i++) {
+        (*this)[i] += vec[i];
     }
     return *this;
 }
 
 template <class T>
-Math_vector<T>& Math_vector<T>::operator-=(const Math_vector<T>& vec) {
-    for (size_t i = 0; i < this->size(); i++) {
-        (*this)[i] -= other[i];
+Math_vector<T>& Math_vector<T>::operator-=(Math_vector<T>& vec) {
+    if (this->_size != vec._size) {
+        throw std::invalid_argument("vectors must be the same size");
+    }
+    for (size_t i = 0; i < this->_size; i++) {
+        (*this)[i] -= vec[i];
     }
     return *this;
 }
 
 template <class T>
 Math_vector<T>& Math_vector<T>::operator*=(T val) {
-    for (size_t i = 0; i < this->size(); i++) {
+    for (size_t i = 0; i < this->_size; i++) {
         (*this)[i] *= val;
     }
     return *this;
@@ -115,25 +131,33 @@ Math_vector<T>& Math_vector<T>::operator=(const Math_vector<T>& other) {
 }
 
 template <class T>
-bool Math_vector<T>::operator==(const Math_vector<T>& other) const {
-    if (this->size() != other.size()) return false;
-    for (size_t i = 0; i < this->size(); i++) {
+bool Math_vector<T>::operator==(Math_vector<T>& other) {
+    if (this->_size != other._size) return false;
+    for (size_t i = 0; i < this->_size; i++) {
         if ((*this)[i] != other[i]) return false;
     }
     return true;
 }
 
 template <class T>
-bool Math_vector<T>::operator!=(const Math_vector<T>& other) const {
+bool Math_vector<T>::operator!=(Math_vector<T>& other) {
     return !(*this == other);
+}
+
+template <class T>
+T& Math_vector<T>::operator[](size_t index) {
+    if (index - _start_index < 0) {
+        throw std::invalid_argument("start_index can't be > index");
+    }
+    return _data[index - _start_index];
 }
 
 template <class T>
 std::ostream& operator<< <T>(std::ostream& out, const Math_vector<T>& obj) {
     out << "( ";
-    for (size_t i = 0; i < obj.size(); i++) {
+    for (size_t i = 0; i < obj._size; i++) {
         out << vec[i];
-        if (i < (obj.size() - 1)) {
+        if (i < (obj._size - 1)) {
             out << ", ";
         }
     }
@@ -143,7 +167,7 @@ std::ostream& operator<< <T>(std::ostream& out, const Math_vector<T>& obj) {
 
 template <class T>
 std::istream& operator>>(std::istream& in, const Math_vector<T>& obj) {
-    for (size_t i = 0; i < obj.size(); i++) {
+    for (size_t i = 0; i < obj._size; i++) {
         in = obj[i];
     }
     return in;

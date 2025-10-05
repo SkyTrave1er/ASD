@@ -13,7 +13,6 @@ template <class T>
 class Triangle_matrix : public Matrix<T> {
 private:
     size_t _N;
-    const T* _data;
 public:
     Triangle_matrix();
     Triangle_matrix(size_t N);
@@ -32,7 +31,11 @@ template <class T>
 Triangle_matrix<T>::Triangle_matrix() : _N(0), _data(nullptr) {}
 
 template <class T>
-Triangle_matrix<T>::Triangle_matrix(size_t N) : _N(N), _data(nullptr) {}
+Triangle_matrix<T>::Triangle_matrix(size_t N) : Math_vector<Math_vector<T>>(N) {
+    for (size_t i = 0; i < N; i++) {
+        _data[i] = new Math_vector<T>(N - i, i);
+    }
+}
 
 template <class T>
 Triangle_matrix<T>::Triangle_matrix(const Math_vector<Math_vector<T>>& other) : _N(0), _data(nullptr) {}
