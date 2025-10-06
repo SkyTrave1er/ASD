@@ -111,6 +111,19 @@ TEST(TestMatrixLib, can_add_matrix) {
     EXPECT_EQ(result[1][1], 12);
 }
 
+TEST(TestMatrixLib, throw_add_matrix) {
+    Matrix<int> m(3, 2);
+    m[0][0] = 1; m[0][1] = 2;
+    m[1][0] = 3; m[1][1] = 4;
+    m[2][0] = 0; m[2][1] = 9;
+
+    Matrix<int> n(2, 2);
+    n[0][0] = 5; n[0][1] = 6;
+    n[1][0] = 7; n[1][1] = 8;
+
+    EXPECT_THROW(Matrix<int> result = m + n, std::invalid_argument);
+}
+
 TEST(TestMatrixLib, can_sub_matrix) {
     Matrix<int> m(2, 2);
     m[0][0] = 1; m[0][1] = 2;
@@ -128,6 +141,19 @@ TEST(TestMatrixLib, can_sub_matrix) {
     EXPECT_EQ(result[1][1], -4);
 }
 
+TEST(TestMatrixLib, throw_sub_matrix) {
+    Matrix<int> m(3, 2);
+    m[0][0] = 1; m[0][1] = 2;
+    m[1][0] = 3; m[1][1] = 4;
+    m[2][0] = 0; m[2][1] = 9;
+
+    Matrix<int> n(2, 2);
+    n[0][0] = 5; n[0][1] = 6;
+    n[1][0] = 7; n[1][1] = 8;
+
+    EXPECT_THROW(Matrix<int> result = m - n, std::invalid_argument);
+}
+
 TEST(TestMatrixLib, can_mult_val) {
     Matrix<int> m(2, 2);
     m[0][0] = 1; m[0][1] = 2;
@@ -141,6 +167,33 @@ TEST(TestMatrixLib, can_mult_val) {
     EXPECT_EQ(result[0][1], 10);
     EXPECT_EQ(result[1][0], 15);
     EXPECT_EQ(result[1][1], 20);
+}
+
+TEST(TestMatrixLib, can_mult_vec) {
+    Matrix<int> m(2, 2);
+    m[0][0] = 1; m[0][1] = 2;
+    m[1][0] = 3; m[1][1] = 4;
+
+    Math_vector<int> n(2);
+    n[0] = 5;
+    n[1] = 6;
+    Math_vector<int> result = m * n;
+
+    EXPECT_EQ(result[0], 17);
+    EXPECT_EQ(result[1], 39);
+}
+
+TEST(TestMatrixLib, throw_mult_vec) {
+    Matrix<int> m(2, 2);
+    m[0][0] = 1; m[0][1] = 2;
+    m[1][0] = 3; m[1][1] = 4;
+
+    Math_vector<int> n(3);
+    n[0] = 5;
+    n[1] = 6;
+    n[2] = 7;
+
+    EXPECT_THROW(Math_vector<int> result = m * n, std::invalid_argument);
 }
 
 TEST(TestMatrixLib, can_mult_matrix) {
@@ -161,4 +214,84 @@ TEST(TestMatrixLib, can_mult_matrix) {
     EXPECT_EQ(result[0][1], 64);  // 1*8 + 2*10 + 3*12
     EXPECT_EQ(result[1][0], 139); // 4*7 + 5*9 + 6*11
     EXPECT_EQ(result[1][1], 154); // 4*8 + 5*10 + 6*12
+}
+
+TEST(TestMatrixLib, throw_mult_matrix) {
+    Matrix<int> m(3, 2);
+    m[0][0] = 1; m[0][1] = 2;
+    m[1][0] = 3; m[1][1] = 4;
+    m[2][0] = 0; m[2][1] = 9;
+
+    Matrix<int> n(3, 2);
+    n[0][0] = 5; n[0][1] = 6;
+    n[1][0] = 7; n[1][1] = 8;
+
+    EXPECT_THROW(Matrix<int> result = m * n, std::invalid_argument);
+}
+
+TEST(TestMatrixLib, can_addeq_matrix) {
+    Matrix<int> m(2, 2);
+    m[0][0] = 1; m[0][1] = 2;
+    m[1][0] = 3; m[1][1] = 4;
+
+    Matrix<int> n(2, 2);
+    n[0][0] = 5; n[0][1] = 6;
+    n[1][0] = 7; n[1][1] = 8;
+
+    m += n;
+
+    EXPECT_EQ(m[0][0], 6);
+    EXPECT_EQ(m[0][1], 8);
+    EXPECT_EQ(m[1][0], 10);
+    EXPECT_EQ(m[1][1], 12);
+}
+
+TEST(TestMatrixLib, can_subeq_matrix) {
+    Matrix<int> m(2, 2);
+    m[0][0] = 1; m[0][1] = 2;
+    m[1][0] = 3; m[1][1] = 4;
+
+    Matrix<int> n(2, 2);
+    n[0][0] = 5; n[0][1] = 6;
+    n[1][0] = 7; n[1][1] = 8;
+
+    m -= n;
+
+    EXPECT_EQ(m[0][0], -4);
+    EXPECT_EQ(m[0][1], -4);
+    EXPECT_EQ(m[1][0], -4);
+    EXPECT_EQ(m[1][1], -4);
+}
+
+TEST(TestMatrixLib, can_multeq_val) {
+    Matrix<int> m(2, 2);
+    m[0][0] = 1; m[0][1] = 2;
+    m[1][0] = 3; m[1][1] = 4;
+
+    m *= 3;
+
+    EXPECT_EQ(m[0][0], 3);
+    EXPECT_EQ(m[0][1], 6);
+    EXPECT_EQ(m[1][0], 9);
+    EXPECT_EQ(m[1][1], 12);
+}
+
+TEST(TestMatrixLib, can_multeq_matrix) {
+    Matrix<int> m(2, 3);
+    m[0][0] = 1; m[0][1] = 2; m[0][2] = 3;
+    m[1][0] = 4; m[1][1] = 5; m[1][2] = 6;
+
+    Matrix<int> n(3, 2);
+    n[0][0] = 7; n[0][1] = 8;
+    n[1][0] = 9; n[1][1] = 10;
+    n[2][0] = 11; n[2][1] = 12;
+
+    m *= n;
+
+    EXPECT_EQ(m.get_rows(), 2);
+    EXPECT_EQ(m.get_cols(), 2);
+    EXPECT_EQ(m[0][0], 58);
+    EXPECT_EQ(m[0][1], 64);
+    EXPECT_EQ(m[1][0], 139);
+    EXPECT_EQ(m[1][1], 154);
 }

@@ -7,7 +7,7 @@ class Matrix;
 template <class T>
 std::ostream& operator<< (std::ostream& out, const Matrix<T>& obj);
 template <class T>
-std::istream& operator>> (std::istream& in, const Matrix<T>& obj);
+std::istream& operator>> (std::istream& in, Matrix<T>& obj);
 
 template <class T>
 class Matrix : public Math_vector<Math_vector<T>> {
@@ -20,28 +20,28 @@ public:
     Matrix(const Matrix&);
     size_t get_rows() const;
     size_t get_cols() const;
-    Matrix<T> transp();
+    Matrix<T> transp() const;
     Matrix operator+(const Matrix& other);
     Matrix operator-(const Matrix& other);
     Matrix<T> operator*(T val);
-    Math_vector<T> operator*(Math_vector<T> vec);
+    Math_vector<T> operator*(const Math_vector<T> vec);
     Matrix<T> operator*(const Matrix<T>& matr);
     Matrix<T>& operator=(const Matrix<T>& other);
-    bool operator==(Matrix<T>& other);
-    bool operator!=(Matrix<T>& other);
+    bool operator==(const Matrix<T>& other) const;
+    bool operator!=(const Matrix<T>& other) const;
     Matrix<T>& operator+=(const Matrix<T>& other);
     Matrix<T>& operator-=(const Matrix<T>& other);
     Matrix<T>& operator*=(T val);
     Matrix<T>& operator*=(const Matrix<T>& other);
     friend std::ostream& operator<< <T>(std::ostream& out, const Matrix<T>& obj);
-    friend std::istream& operator>> <T>(std::istream& in, const Matrix<T>& obj);
+    friend std::istream& operator>> <T>(std::istream& in, Matrix<T>& obj);
 };
 
 template <class T>
 Matrix<T>::Matrix() : _rows(0), _cols(0), Math_vector<Math_vector<T>>() {}
 
 template <class T>
-Matrix<T>::Matrix(size_t rows, size_t cols) : _rows(rows), _cols(cols), Math_vector<Math_vector<T>>(cols) {
+Matrix<T>::Matrix(size_t rows, size_t cols) : _rows(rows), _cols(cols), Math_vector<Math_vector<T>>(rows) {
     /*for (size_t i = 0; i < _cols; i++) {
         _data[i] = new Math_vector<T>(rows);
     }*/
@@ -81,7 +81,7 @@ size_t Matrix<T>::get_cols() const {
 }
 
 template <class T>
-Matrix<T> Matrix<T>::transp() {
+Matrix<T> Matrix<T>::transp() const {
     Matrix<T> result(_cols, _rows);
     for (size_t i = 0; i < _rows; i++) {
         for (size_t j = 0; j < _cols; j++) {
@@ -102,16 +102,25 @@ Matrix<T> Matrix<T>::operator*(T val) {
 
 template <class T>
 Matrix<T> Matrix<T>::operator+(const Matrix& other) {
+    if (this->get_cols() != other.get_cols() || this->get_rows() != other.get_rows()) {
+        throw std::invalid_argument("Matrixes must be the same size");
+    }
     return this->Math_vector<Math_vector<T>>::operator+(other);
 }
 
 template <class T>
 Matrix<T> Matrix<T>::operator-(const Matrix& other) {
+    if (this->get_cols() != other.get_cols() || this->get_rows() != other.get_rows()) {
+        throw std::invalid_argument("Matrixes must be the same size");
+    }
     return this->Math_vector<Math_vector<T>>::operator-(other);
 }
 
 template <class T>
-Math_vector<T> Matrix<T>::operator*(Math_vector<T> vec) {
+Math_vector<T> Matrix<T>::operator*(const Math_vector<T> vec) {
+    if (this->get_cols() != vec.size()) {
+        throw std::invalid_argument("Matrixes must be the same size");
+    }
     Math_vector<T> result(_rows);
     for (int i = 0; i < _rows; i++) {
         result[i] = (*this)[i] * vec;
@@ -121,6 +130,9 @@ Math_vector<T> Matrix<T>::operator*(Math_vector<T> vec) {
 
 template <class T>
 Matrix<T> Matrix<T>::operator*(const Matrix<T>& matr) {
+    if (this->get_cols() != matr.get_rows()) {
+        throw std::invalid_argument("Matrixes must be the same size");
+    }
     Matrix<T> result(_rows, matr._cols);
     Matrix<T> matr_t = matr.transp();
 
@@ -143,7 +155,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
 }
 
 template <class T>
-bool Matrix<T>::operator==(Matrix<T>& other) {
+bool Matrix<T>::operator==(const Matrix<T>& other) const {
     if (_rows != other._rows || _cols != other._cols) {
         return false;
     }
@@ -151,18 +163,24 @@ bool Matrix<T>::operator==(Matrix<T>& other) {
 }
 
 template <class T>
-bool Matrix<T>::operator!=(Matrix<T>& other) {
+bool Matrix<T>::operator!=(const Matrix<T>& other) const {
     return !(*this == other);
 }
 
 template <class T>
 Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& other) {
+    if (this->get_cols() != other.get_cols() || this->get_rows() != other.get_rows()) {
+        throw std::invalid_argument("Matrixes must be the same size");
+    }
     *this = *this + other;
     return *this;
 }
 
 template <class T>
 Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& other) {
+    if (this->get_cols() != other.get_cols() || this->get_rows() != other.get_rows()) {
+        throw std::invalid_argument("Matrixes must be the same size");
+    }
     *this = *this - other;
     return *this;
 }
@@ -177,6 +195,9 @@ Matrix<T>& Matrix<T>::operator*=(T val) {
 
 template <class T>
 Matrix<T>& Matrix<T>::operator*=(const Matrix<T>& other) {
+    if (this->get_cols() != other.get_rows()) {
+        throw std::invalid_argument("Matrixes must be the same size");
+    }
     *this = *this * other;
     return *this;
 }
@@ -196,7 +217,7 @@ std::ostream& operator<< <T>(std::ostream& out, const Matrix<T>& obj) {
 }
 
 template <class T>
-std::istream& operator>>(std::istream& in, const Matrix<T>& obj) {
+std::istream& operator>>(std::istream& in, Matrix<T>& obj) {
     for (size_t i = 0; i < obj._rows; ++i) {
         for (size_t j = 0; j < obj._cols; ++j) {
             in >> obj[i][j];

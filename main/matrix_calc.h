@@ -13,5 +13,5 @@ void matr_umn_int();
 void tmatr_plus();
 void tmatr_minus();
 void tmatr_umn_tmatr();
-void tmatr_umn_vec();
+//void tmatr_umn_vec();
 void tmatr_umn_int();
