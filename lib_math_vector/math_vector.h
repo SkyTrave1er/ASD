@@ -65,7 +65,6 @@ Math_vector<T> Math_vector<T>::operator+(const Math_vector<T> vec) {
     }
     Math_vector<T> result(this->_size, this->_start_index);
     for (int i = 0; i < vec._size; i++) {
-        //result[i] = (*this)[i] + vec[i];
         result._data[i] = this->_data[i] + vec._data[i];
     }
     return result;
@@ -78,7 +77,6 @@ Math_vector<T> Math_vector<T>::operator-(const Math_vector<T> vec) {
     }
     Math_vector<T> result(this->_size, this->_start_index);
     for (int i = 0; i < vec._size; i++) {
-        //result[i] = (*this)[i] - vec[i];
         result._data[i] = this->_data[i] - vec._data[i];
     }
     return result;
@@ -88,7 +86,6 @@ template <class T>
 Math_vector<T> Math_vector<T>::operator*(T val) {
     Math_vector<T> result(this->_size, this->_start_index);
     for (int i = 0; i < this->_size; i++) {
-        //result[i] = (*this)[i] * val;
         result._data[i] = this->_data[i] * val;
     }
     return result;

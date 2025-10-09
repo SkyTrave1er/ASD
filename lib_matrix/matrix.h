@@ -42,9 +42,6 @@ Matrix<T>::Matrix() : _rows(0), _cols(0), Math_vector<Math_vector<T>>() {}
 
 template <class T>
 Matrix<T>::Matrix(size_t rows, size_t cols) : _rows(rows), _cols(cols), Math_vector<Math_vector<T>>(rows) {
-    /*for (size_t i = 0; i < _cols; i++) {
-        _data[i] = new Math_vector<T>(rows);
-    }*/
     for (size_t i = 0; i < _rows; i++) {
         (*this)[i] = Math_vector<T>(_cols);
     }
