@@ -11,7 +11,9 @@ public:
     Stack(const Stack<T>& other);
     void push(T val);
     void pop();
-    T get_top() const;
+    T top() const;
+    int get_size() const;
+    int get_top() const;
     inline bool is_empty() const noexcept;
     inline bool is_full() const noexcept;
     void clear() noexcept;
@@ -33,7 +35,7 @@ Stack<T>::Stack(const Stack<T>& other) {
     this->_top = other._top;
     _data = new T[_size];
 
-    for (int i = 0; i < _top; i++) {
+    for (int i = 0; i <= _top; i++) {
         _data[i] = other._data[i];
     }
 }
@@ -55,7 +57,7 @@ void Stack<T>::pop() {
 }
 
 template<class T>
-T Stack<T>::get_top() const {
+T Stack<T>::top() const {
     if (is_empty()) {
         throw std::logic_error("Stack is empty");
     }
@@ -63,16 +65,26 @@ T Stack<T>::get_top() const {
 }
 
 template<class T>
-bool Stack<T>::is_full() const {
+int Stack<T>::get_size() const {
+    return _size;
+}
+
+template<class T>
+int Stack<T>::get_top() const {
+    return _top;
+}
+
+template<class T>
+bool Stack<T>::is_full() const noexcept {
     return _top == _size - 1;
 }
 
 template<class T>
-bool Stack<T>::is_empty() const {
+bool Stack<T>::is_empty() const noexcept {
     return _top == -1;
 }
 
 template<class T>
-void Stack<T>::clear() {
+void Stack<T>::clear() noexcept {
     _top = -1;
 }
