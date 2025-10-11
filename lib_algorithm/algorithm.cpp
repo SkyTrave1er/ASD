@@ -1,78 +1,43 @@
 #include "../lib_algorithm/algorithm.h"
 
+
+
 int find_local_min(const Matrix<unsigned int>& matr) {
-    int min = 100000000;
-    for (int i = 0; i < matr.get_rows(); i++) {
-        for (int j = 0; j < matr.get_cols(); j++) {
-            if ((i == 0) && (j == 0) && 
-                (matr[i][j] < matr[i][j + 1] || matr[i][j] < matr[i + 1][j]
-                || matr[i][j] < matr[i + 1][j + 1])) {
-                if (min > matr[i][j]) {
-                    min = matr[i][j];
-                }
-            }
-            
-            if ((i == 0) && (j != 0) && (j != matr.get_cols() - 1) &&
-                (matr[i][j] < matr[i][j + 1] || matr[i][j] < matr[i + 1][j]
-                || matr[i][j] < matr[i][j - 1])) {
-                if (min > matr[i][j]) {
-                    min = matr[i][j];
-                }
-            }
+    int n = matr.get_rows();
 
-            if ((i == 0) && (j == matr.get_cols() - 1) &&
-                (matr[i][j] < matr[i + 1][j]
-                || matr[i][j] < matr[i][j - 1])) {
-                if (min > matr[i][j]) {
-                    min = matr[i][j];
-                }
-            }
+    int i = rand() % n;
+    int j = rand() % n;
 
-            if ((i != 0) && (i != matr.get_rows() - 1) && (j == 0) &&
-                (matr[i][j] < matr[i + 1][j]
-                || matr[i][j] < matr[i][j + 1] || matr[i][j] < matr[i - 1][j])) {
-                if (min > matr[i][j]) {
-                    min = matr[i][j];
-                }
-            }
+    while (1) {
+        unsigned int current = matr[i][j];
+        bool is_min = true;
 
-            if ((i == matr.get_rows() - 1) && (j == 0) &&
-                (matr[i][j] < matr[i][j + 1] || matr[i][j] < matr[i - 1][j])) {
-                if (min > matr[i][j]) {
-                    min = matr[i][j];
-                }
-            }
+        if (j > 0 && matr[i][j - 1] < current) {
+            j = j - 1;
+            is_min = false;
+            continue;
+        }
 
-            if ((i == matr.get_rows() - 1) && (j != 0) && (j != matr.get_cols() - 1) &&
-                (matr[i][j] < matr[i][j + 1] || matr[i][j] < matr[i - 1][j]
-                || matr[i][j] < matr[i][j - 1])) {
-                if (min > matr[i][j]) {
-                    min = matr[i][j];
-                }
-            }
+        if (j < n - 1 && matr[i][j + 1] < current) {
+            j = j + 1;
+            is_min = false;
+            continue;
+        }
 
-            if ((i == matr.get_rows() - 1) && (j == matr.get_cols() - 1) &&
-                (matr[i][j] < matr[i - 1][j] || matr[i][j] < matr[i][j - 1])) {
-                if (min > matr[i][j]) {
-                    min = matr[i][j];
-                }
-            }
+        if (i > 0 && matr[i - 1][j] < current) {
+            i = i - 1;
+            is_min = false;
+            continue;
+        }
 
-            if ((i != 0) && (i != matr.get_rows() - 1) && (j == matr.get_cols() - 1) &&
-                (matr[i][j] < matr[i - 1][j] || matr[i][j] < matr[i + 1][j] || matr[i][j] < matr[i][j - 1])) {
-                if (min > matr[i][j]) {
-                    min = matr[i][j];
-                }
-            }
+        if (i < n - 1 && matr[i + 1][j] < current) {
+            i = i + 1;
+            is_min = false;
+            continue;
+        }
 
-            if ((i != 0) && (i != matr.get_rows() - 1) && (j != 0) && (j != matr.get_cols() - 1) &&
-                (matr[i][j] < matr[i - 1][j] || matr[i][j] < matr[i + 1][j]
-                || matr[i][j] < matr[i][j - 1] || matr[i][j] < matr[i][j + 1])) {
-                if (min > matr[i][j]) {
-                    min = matr[i][j];
-                }
-            }
+        if (is_min) {
+            return matr[i][j];
         }
     }
-    return min;
 }
