@@ -41,3 +41,34 @@ int find_local_min(const Matrix<unsigned int>& matr) {
         }
     }
 }
+
+bool check_breckets(std::string str) {
+    Stack<char> brackets(str.size());
+
+    for (char i : str) {
+        if (i == '(' || i == '{' || i == '[') {
+            brackets.push(i);
+        }
+        else if (i == ')' || i == '}' || i == ']') {
+            if (brackets.is_empty()) {
+                return false;
+            }
+            if ((brackets.top() == '(' && i == ')')
+                || (brackets.top() == '{' && i == '}')
+                || (brackets.top() == '[' && i == ']')) {
+                brackets.pop();
+            }
+        }
+    }
+    return brackets.is_empty();
+
+}
+
+void read_expression(std::string expression) {
+    if (!check_breckets(expression)) {
+        throw std::logic_error("Invalid breckets");
+    }
+    for (char i : expression) {
+         
+    }
+}

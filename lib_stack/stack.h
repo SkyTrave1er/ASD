@@ -7,6 +7,7 @@ class Stack {
     int _size;
     int _top;
 public:
+    Stack();
     Stack(int size);
     Stack(const Stack<T>& other);
     void push(T val);
@@ -18,6 +19,9 @@ public:
     inline bool is_full() const noexcept;
     void clear() noexcept;
 };
+
+template<class T>
+Stack<T>::Stack() : _size(0), _top(-1), _data(nullptr) {}
 
 template<class T>
 Stack<T>::Stack(int size) {

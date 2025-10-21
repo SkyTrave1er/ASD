@@ -53,3 +53,69 @@ TEST(TestAlgorithmLib, can_find_local_min_44) {
 
     EXPECT_TRUE(n == 0 || n == 1 || n == 5 || n == 11);
 }
+
+TEST(TestAlgorithmLib, can_check_brackets_v1) {
+    std::string s = "()()";
+    bool b = check_breckets(s);
+    EXPECT_TRUE(b);
+}
+
+TEST(TestAlgorithmLib, can_check_brackets_v2) {
+    std::string s = "[(()())({})]";
+    bool b = check_breckets(s);
+    EXPECT_TRUE(b);
+}
+
+TEST(TestAlgorithmLib, can_check_brackets_v3) {
+    std::string s = "[(){[()()]({()})}]";
+    bool b = check_breckets(s);
+    EXPECT_TRUE(b);
+}
+
+TEST(TestAlgorithmLib, can_check_brackets_v4) {
+    std::string s = "(a+b)*(c-d)";
+    bool b = check_breckets(s);
+    EXPECT_TRUE(b);
+}
+
+TEST(TestAlgorithmLib, throw_check_brackets_v1) {
+    std::string s = "{()()";
+    bool b = check_breckets(s);
+    EXPECT_FALSE(b);
+}
+
+TEST(TestAlgorithmLib, throw_check_brackets_v2) {
+    std::string s = "()){()}";
+    bool b = check_breckets(s);
+    EXPECT_FALSE(b);
+}
+
+TEST(TestAlgorithmLib, throw_check_brackets_v3) {
+    std::string s = "((()()(()))";
+    bool b = check_breckets(s);
+    EXPECT_FALSE(b);
+}
+
+TEST(TestAlgorithmLib, throw_check_brackets_v4) {
+    std::string s = "]})";
+    bool b = check_breckets(s);
+    EXPECT_FALSE(b);
+}
+
+TEST(TestAlgorithmLib, throw_check_brackets_v5) {
+    std::string s = "[{(";
+    bool b = check_breckets(s);
+    EXPECT_FALSE(b);
+}
+
+TEST(TestAlgorithmLib, throw_check_brackets_v6) {
+    std::string s = "{(})";
+    bool b = check_breckets(s);
+    EXPECT_FALSE(b);
+}
+
+TEST(TestAlgorithmLib, throw_check_brackets_v7) {
+    std::string s = "[(]{)}";
+    bool b = check_breckets(s);
+    EXPECT_FALSE(b);
+}
