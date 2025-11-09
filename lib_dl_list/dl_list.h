@@ -1,21 +1,24 @@
 #pragma once
+
 #include <iostream>
 
 template <class T>
 struct Node {
     T _value;
     Node<T>* _next;
-    Node(T value, Node<T>* next = nullptr);
+    Node<T>* _prev;
+    Node(T value, Node<T>* next = nullptr, Node<T>* prev = nullptr);
 };
 
 template <class T>
-Node<T>::Node(T value, Node<T>* next) {
+Node<T>::Node(T value, Node<T>* next, Node<T>* prev) {
     _value = value;
     _next = next;
+    _prev = prev;
 }
 
 template <class T>
-class List {
+class Dl_list {
     Node<T>* _head;
     Node<T>* _tail;
     size_t _count;
@@ -46,6 +49,17 @@ public:
             return tmp;
         }
 
+        Iterator& operator--() {
+            _current = _current->_prev;
+            return *this;
+        }
+
+        Iterator operator--(int) {
+            Iterator tmp = *this;
+            --(*this);
+            return tmp;
+        }
+
         Iterator& operator=(Iterator& other) {
             if (this != &other) {
                 _current = other._current
@@ -53,18 +67,14 @@ public:
             return *this;
         }
 
-        bool operator==(Iterator& other) {
-            return (_current == other._current);
-        }
-
         bool operator!=(Iterator& other) {
             return (_current != other._current);
         }
     };
 
-    List();
-    ~List();
-    List(const List<T>& other);
+    Dl_list();
+    ~Dl_list();
+    Dl_list(const Dl_list<T>& other);
     bool is_empty();
     size_t get_count() const;
     Node<T>* head();
@@ -83,22 +93,22 @@ public:
 };
 
 template <class T>
-List<T>::List() : _head(nullptr), _tail(nullptr), _count(0) {}
+Dl_list<T>::Dl_list() : _head(nullptr), _tail(nullptr), _count(0) {}
 
 template <class T>
-List<T>::~List() {
-    Node<T>* prev;
-    Node<T>* current = this->_head;
+Dl_list<T>::~Dl_list() {
+    Node<T>* current = _head;
     while (current != nullptr) {
-        prev = current;
-        current = current->_next;
-        delete prev;
+        Node<T>* next = current->_next;
+        delete current;
+        current = next;
     }
 }
 
 template <class T>
-List<T>::List(const List<T>& other) : _head(nullptr), _tail(nullptr), _count(0) {
+Dl_list<T>::Dl_list(const Dl_list<T>& other) : _head(nullptr), _tail(nullptr), _count(0) {
     Node<T>* current = other._head;
+
     while (current != nullptr) {
         push_back(current->_value);
         current = current->_next;
@@ -106,65 +116,69 @@ List<T>::List(const List<T>& other) : _head(nullptr), _tail(nullptr), _count(0) 
 }
 
 template <class T>
-typename List<T>::Iterator List<T>::begin() {
+typename Dl_list<T>::Iterator Dl_list<T>::begin() {
     return Iterator(_head);
 }
 
 template <class T>
-typename List<T>::Iterator List<T>::end() {
+typename Dl_list<T>::Iterator Dl_list<T>::end() {
     return Iterator(_tail);
 }
 
 template <class T>
-bool List<T>::is_empty() {
+bool Dl_list<T>::is_empty() {
     return _head == nullptr;
 }
 
 template <class T>
-size_t List<T>::get_count() const {
+size_t Dl_list<T>::get_count() const {
     return _count;
 }
 
 template <class T>
-Node<T>* List<T>::head() {
+Node<T>* Dl_list<T>::head() {
     return _head;
 }
 
 template <class T>
-Node<T>* List<T>::tail() {
+Node<T>* Dl_list<T>::tail() {
     return _tail;
 }
 
 template <class T>
-void List<T>::push_front(const T& value) noexcept {
-    Node<T>* node = new Node<T>(value);
+void Dl_list<T>::push_front(const T& value) noexcept {
+    Node<T>* node = new Node<T>(value, _head, nullptr);
     if (is_empty()) {
         _head = node;
         _tail = node;
         _count++;
         return;
     }
-    node->_next = _head;
+    if (_head != nullptr) {
+        _head->_prev = node;
+    }
     _head = node;
     _count++;
 }
 
 template <class T>
-void List<T>::push_back(const T& value) noexcept {
-    Node<T>* node = new Node<T>(value);
+void Dl_list<T>::push_back(const T& value) noexcept {
+    Node<T>* node = new Node<T>(value, nullptr, _tail);
     if (is_empty()) {
         _head = node;
         _tail = node;
         _count++;
         return;
     }
-    _tail->_next = node;
+    if (_tail != nullptr) {
+        _tail->_next = node;
+    }
     _tail = node;
     _count++;
 }
 
 template <class T>
-void List<T>::insert(Node<T>* node, const T& value) {
+void Dl_list<T>::insert(Node<T>* node, const T& value) {
     if (node == nullptr || is_empty()) {
         throw std::logic_error("empty");
     }
@@ -178,7 +192,7 @@ void List<T>::insert(Node<T>* node, const T& value) {
 }
 
 template <class T>
-void List<T>::insert(size_t pos, const T& value) {
+void Dl_list<T>::insert(size_t pos, const T& value) {
     if (pos == 0) {
         push_front(value);
         return;
@@ -203,7 +217,7 @@ void List<T>::insert(size_t pos, const T& value) {
 }
 
 template <class T>
-void List<T>::pop_back() {
+void Dl_list<T>::pop_back() {
     if (is_empty()) {
         throw std::logic_error("empty");
     }
@@ -214,18 +228,15 @@ void List<T>::pop_back() {
         _count--;
         return;
     }
-    Node<T>* current = _head;
-    while (current->_next != _tail) {
-        current = current->_next;
-    }
+    Node<T>* current = _tail->_prev;
     delete _tail;
     _tail = current;
-    current->_next = nullptr;
+    _tail->_next = nullptr;
     _count--;
 }
 
 template <class T>
-void List<T>::pop_front() {
+void Dl_list<T>::pop_front() {
     if (is_empty()) {
         throw std::logic_error("empty");
     }
@@ -239,11 +250,12 @@ void List<T>::pop_front() {
     Node<T>* current = _head->_next;
     delete _head;
     _head = current;
+    _head->_prev = nullptr;
     _count--;
 }
 
 template <class T>
-void List<T>::erase(Node<T>* node) {
+void Dl_list<T>::erase(Node<T>* node) {
     if (node == nullptr || is_empty()) {
         throw std::logic_error("empty");
     }
@@ -266,7 +278,7 @@ void List<T>::erase(Node<T>* node) {
 }
 
 template <class T>
-void List<T>::erase(size_t pos) {
+void Dl_list<T>::erase(size_t pos) {
     if (is_empty()) {
         throw std::logic_error("empty");
     }

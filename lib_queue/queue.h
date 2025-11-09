@@ -11,6 +11,7 @@ class Queue {
 public:
     Queue(int size);
     Queue(const Queue<T>& other);
+    ~Queue();
     void push(T val);
     void pop();
     T tail() const;
@@ -33,6 +34,11 @@ Queue<T>::Queue(int size) : _size(size), _count(0), _head(0), _tail(0) {
 }
 
 template <class T>
+Queue<T>::~Queue() {
+    delete[] _data;
+}
+
+template <class T>
 Queue<T>::Queue(const Queue<T>& other) {
     this->_size = other._size;
     this->_count = other._count;
@@ -47,7 +53,7 @@ Queue<T>::Queue(const Queue<T>& other) {
 
 template <class T>
 bool Queue<T>::is_empty() const noexcept {
-    if (_count == 0 && _tail == _head) {
+    if (_count == 0) {
         return true;
     }
     return false;

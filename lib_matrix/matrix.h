@@ -144,7 +144,7 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& matr) {
 template <class T>
 Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
     if (this != &other) {
-        Math_vector<Math_vector<T>>::operator=(other);
+        this->Math_vector<Math_vector<T>>::operator=(other);
         _rows = other._rows;
         _cols = other._cols;
     }
@@ -156,7 +156,7 @@ bool Matrix<T>::operator==(const Matrix<T>& other) const {
     if (_rows != other._rows || _cols != other._cols) {
         return false;
     }
-    return Math_vector<Math_vector<T>>::operator==(other);
+    return this->Math_vector<Math_vector<T>>::operator==(other);
 }
 
 template <class T>
@@ -184,9 +184,7 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& other) {
 
 template <class T>
 Matrix<T>& Matrix<T>::operator*=(T val) {
-    for (size_t i = 0; i < _rows; i++) {
-        (*this)[i] *= val;
-    }
+    *this = *this * val;
     return *this;
 }
 
@@ -203,12 +201,7 @@ template <class T>
 std::ostream& operator<< <T>(std::ostream& out, const Matrix<T>& obj) {
     out << "Matrix " << obj._rows << "x" << obj._cols << ":\n";
     for (size_t i = 0; i < obj._rows; i++) {
-        out << "[ ";
-        for (size_t j = 0; j < obj._cols; j++) {
-            out << obj[i][j];
-            if (j < obj._cols - 1) out << ", ";
-        }
-        out << " ]\n";
+        out << obj[i] << std::endl;
     }
     return out;
 }
@@ -216,9 +209,9 @@ std::ostream& operator<< <T>(std::ostream& out, const Matrix<T>& obj) {
 template <class T>
 std::istream& operator>>(std::istream& in, Matrix<T>& obj) {
     for (size_t i = 0; i < obj._rows; ++i) {
-        for (size_t j = 0; j < obj._cols; ++j) {
-            in >> obj[i][j];
-        }
+        //for (size_t j = 0; j < obj._cols; ++j) {
+        in >> obj[i];
+        //}
     }
     return in;
 }

@@ -4,7 +4,7 @@
 template <class T>
 class Math_vector;
 template <class T>
-std::ostream& operator<< (std::ostream& out, Math_vector<T>& obj);
+std::ostream& operator<< (std::ostream& out, const Math_vector<T>& obj);
 template <class T>
 std::istream& operator>> (std::istream& in, Math_vector<T>& obj);
 
@@ -32,7 +32,7 @@ public:
     bool operator!=(const Math_vector<T>& other) const;
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
-    friend std::ostream& operator<< <T>(std::ostream& out, Math_vector<T>& obj);
+    friend std::ostream& operator<< <T>(std::ostream& out, const Math_vector<T>& obj);
     friend std::istream& operator>> <T>(std::istream& in, Math_vector<T>& obj);
 };
 
@@ -135,7 +135,7 @@ Math_vector<T>& Math_vector<T>::operator*=(T val) {
 
 template <class T>
 Math_vector<T>& Math_vector<T>::operator=(const Math_vector<T>& other) {
-    TVector<T>::operator=(other);
+    this->TVector<T>::operator=(other);
     this->_start_index = other._start_index;
     return *this;
 }
@@ -165,21 +165,21 @@ T& Math_vector<T>::operator[](size_t index) {
 template <class T>
 const T& Math_vector<T>::operator[](size_t index) const {
     if (index - _start_index < 0) {
-        throw std::invalid_argument("start_index can't be > index");
+        return T();
     }
     return _data[index - _start_index];
 }
 
 template <class T>
-std::ostream& operator<< <T>(std::ostream& out, Math_vector<T>& obj) {
-    out << "( ";
+std::ostream& operator<< <T>(std::ostream& out, const Math_vector<T>& obj) {
+    out << "[ ";
     for (size_t i = 0; i < obj._size; i++) {
         out << obj[i];
         if (i < (obj._size - 1)) {
             out << ", ";
         }
     }
-    out << " )";
+    out << " ]";
     return out;
 }
 

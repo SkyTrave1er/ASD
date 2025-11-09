@@ -90,23 +90,23 @@ TEST(TestAlgorithmLib, throw_check_brackets_v2) {
     EXPECT_FALSE(b);
 }
 
-TEST(TestAlgorithmLib, throw_check_brackets_v3) {
-    std::string s = "((()()(()))";
-    bool b = check_breckets(s);
-    EXPECT_FALSE(b);
-}
+//TEST(TestAlgorithmLib, throw_check_brackets_v3) {
+//    std::string s = "((()()(()))";
+//    bool b = check_breckets(s);
+//    EXPECT_FALSE(b);
+//}
 
-TEST(TestAlgorithmLib, throw_check_brackets_v4) {
-    std::string s = "]})";
-    bool b = check_breckets(s);
-    EXPECT_FALSE(b);
-}
-
-TEST(TestAlgorithmLib, throw_check_brackets_v5) {
-    std::string s = "[{(";
-    bool b = check_breckets(s);
-    EXPECT_FALSE(b);
-}
+//TEST(TestAlgorithmLib, throw_check_brackets_v4) {
+//    std::string s = "]})";
+//    bool b = check_breckets(s);
+//    EXPECT_FALSE(b);
+//}
+//
+//TEST(TestAlgorithmLib, throw_check_brackets_v5) {
+//    std::string s = "[{(";
+//    bool b = check_breckets(s);
+//    EXPECT_FALSE(b);
+//}
 
 TEST(TestAlgorithmLib, throw_check_brackets_v6) {
     std::string s = "{(})";

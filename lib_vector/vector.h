@@ -20,7 +20,82 @@ protected:
     size_t calculate_capacity(size_t required_capacity) const;
 
 public:
+
+    friend class TVector<T>::Iterator;
     class Iterator {
+        T* _ptr;
+    public:
+        Iterator(T* ptr): _ptr(ptr) {
+           /* while (_ptr < _capacity && _states[_ptr] != BUSY) {
+                ++_ptr;
+            }*/
+        }
+
+        T& operator*() {
+            /*if (_ptr > _capacity) {
+                throw std::out_of_range("Invalid pos");
+            }*/
+            return *_ptr;
+        }
+
+        Iterator& operator++() {
+            ++_ptr;
+            /*do {
+                ++_ptr;
+            } while ((_ptr < _capcity) && (_states[_ptr] != BUSY));*/
+            return *this;
+        }
+
+        Iterator operator++(int) {
+            Iterator tmp = *this;
+            ++(*this);
+            return tmp;
+        }
+
+        Iterator& operator--() {
+            --_ptr;
+            /*do {
+                --_ptr;
+            } while ((_ptr > 0) && (_states[_ptr] != BUSY));*/
+            return *this;
+        }
+
+        Iterator operator--(int) {
+            Iterator tmp = *this;
+            --(*this);
+            return tmp;
+        }
+
+        Iterator operator+(size_t k) const {
+            Iterator temp = *this;;
+            for (size_t i = 0; i < k; ++i) {
+                ++temp;
+            }
+            return temp;
+        }
+
+
+        bool operator!=(const Iterator& other) const {
+            return (_ptr != other._ptr);
+        }
+
+        bool operator==(const Iterator& other) const {
+            return (_ptr != other._ptr);
+        }
+
+        Iterator& operator=(const Iterator& other) {
+            if (this != &other) {
+                _ptr = other._ptr;
+            }
+            return *this;
+        }
+
+        T* get_ptr() const {
+            return _ptr;
+        }
+    };
+
+    /*class Iterator {
         T* _ptr;
         size_t _pos;
         size_t _finish;
@@ -96,11 +171,83 @@ public:
         size_t get_index() const noexcept {
             return _pos;
         }
-    };
+    };*/
 
-    friend class Iterator;
+
+    friend class ConstIterator;
 
     class ConstIterator {
+        T* _ptr;
+    public:
+        ConstIterator(const T* ptr)
+            : _ptr(ptr) {
+            while (_ptr < _capacity && _states[_ptr] != BUSY) {
+                ++_ptr;
+            }
+        }
+
+        const T& operator*() const {
+            if (_ptr > _capacity) {
+                throw std::out_of_range("Invalid pos");
+            }
+            return *_ptr;
+        }
+
+        ConstIterator& operator++() {
+            do {
+                ++_ptr;
+            } while ((_ptr < _capacity) && (_states[_ptr] != BUSY));
+            return *this;
+        }
+
+        ConstIterator operator++(int) {
+            ConstIterator tmp = *this;
+            ++(*this);
+            return tmp;
+        }
+
+        ConstIterator& operator--() {
+            do {
+                --_ptr;
+            } while ((_ptr > 0) && (_states[_ptr] != BUSY));
+            return *this;
+        }
+
+        ConstIterator operator--(int) {
+            ConstIterator tmp = *this;
+            --(*this);
+            return tmp;
+        }
+
+        ConstIterator operator+(size_t k) const {
+            ConstIterator temp = *this;
+            for (size_t i = 0; i < k; ++i) {
+                ++temp;
+            }
+            return temp;
+        }
+
+        bool operator!=(const ConstIterator& other) const {
+            return (_ptr != other._ptr);
+        }
+
+        bool operator==(const ConstIterator& other) const {
+            return (_ptr == other._ptr);
+        }
+
+        ConstIterator& operator=(const ConstIterator& other) {
+            if (this != &other) {
+                _ptr = other._ptr;
+            }
+            return *this;
+        }
+
+        T* get_ptr() const {
+            return _ptr;
+        }
+    };
+
+    /*class ConstIterator {
         T* _ptr;
         size_t _pos;
         size_t _capacity;
@@ -175,9 +322,9 @@ public:
             }
             return *this;
         }
-    };
+    };*/
 
-    friend class ConstIterator;
+    
 
     TVector();
     explicit TVector(size_t size);
@@ -392,6 +539,7 @@ const T& TVector<T>::operator[](size_t index) const {
 
 template <class T>
 typename TVector<T>::Iterator TVector<T>::begin() noexcept {
+    
     size_t first_busy_pos = 0;
     for (size_t i = 0; i < _capacity; ++i) {
         if (_states[i] == BUSY) {
@@ -399,8 +547,17 @@ typename TVector<T>::Iterator TVector<T>::begin() noexcept {
             break;
         }
     }
+    return Iterator(_data + first_busy_pos);
+    
+    /*size_t first_busy_pos = 0;
+    for (size_t i = 0; i < _capacity; ++i) {
+        if (_states[i] == BUSY) {
+            first_busy_pos = i;
+            break;
+        }
+    }
     return Iterator(_data + first_busy_pos,
-        _states + first_busy_pos, 0, _size + _deleted);
+        _states + first_busy_pos, 0, _size + _deleted);*/
 }
 
 template <class T>
@@ -412,8 +569,17 @@ typename TVector<T>::ConstIterator TVector<T>::begin() const noexcept {
             break;
         }
     }
+    return ConstIterator(_data + first_busy_pos);
+    
+    /*size_t first_busy_pos = 0;
+    for (size_t i = 0; i < _capacity; ++i) {
+        if (_states[i] == BUSY) {
+            first_busy_pos = i;
+            break;
+        }
+    }
     return Iterator(_data + first_busy_pos,
-        _states + first_busy_pos, 0, _size + _deleted);
+        _states + first_busy_pos, 0, _size + _deleted);*/
 }
 
 template <class T>
@@ -425,8 +591,17 @@ typename TVector<T>::Iterator TVector<T>::end() noexcept {
             break;
         }
     }
+    return Iterator(_data + last_busy_pos + 1);
+
+    /*size_t last_busy_pos = _size + _deleted;
+    for (size_t i = _size + _deleted; i >= 0; i--) {
+        if (_states[i] == BUSY) {
+            last_busy_pos = i;
+            break;
+        }
+    }
     return Iterator(_data + last_busy_pos + 1,
-        _states + last_busy_pos + 1, last_busy_pos + 1, _size + _deleted);
+        _states + last_busy_pos + 1, last_busy_pos + 1, _size + _deleted);*/
 }
 
 template <class T>
@@ -438,8 +613,17 @@ typename TVector<T>::ConstIterator TVector<T>::end() const noexcept {
             break;
         }
     }
+    return ConstIterator(_data + last_busy_pos + 1);
+
+    /*size_t last_busy_pos = _size + _deleted;
+    for (size_t i = _size + _deleted; i >= 0; i--) {
+        if (_states[i] == BUSY) {
+            last_busy_pos = i;
+            break;
+        }
+    }
     return ConstIterator(_data + last_busy_pos + 1,
-        _states + last_busy_pos + 1, last_busy_pos + 1, _size + _deleted);
+        _states + last_busy_pos + 1, last_busy_pos + 1, _size + _deleted);*/
 }
 
 // Small methods
@@ -745,7 +929,7 @@ void TVector<T>::insert(const Iterator& it, const T& value) {
         push_back(value);
         return;
     }*/
-    size_t pos = it.get_index();
+    size_t pos = it.get_ptr() - _data;
     if (pos >= _capacity || _states[pos] != BUSY) {
         throw std::out_of_range("Invalid position");
     }
@@ -778,7 +962,7 @@ void TVector<T>::insert(const Iterator& it, const T& value) {
 
 template <class T>
 void TVector<T>::insert(Iterator start, size_t count, const T& value) {
-    size_t pos = start.get_index();
+    size_t pos = start.get_ptr() - _data;
     reserve(_size + count + 15);
     for (size_t i = _capacity - 1; i > pos + count - 1; --i) {
         if (_states[i - count] != EMPTY) {
@@ -854,7 +1038,7 @@ void TVector<T>::erase(size_t pos) {
 
 template <class T>
 void TVector<T>::erase(const Iterator& it) {
-    size_t pos = it.get_index();
+    size_t pos = it.get_ptr() - _data;
     if (pos >= _capacity || _states[pos] != BUSY) {
         throw std::out_of_range("invalid position");
     }
@@ -869,10 +1053,10 @@ void TVector<T>::erase(const Iterator& it) {
 
 template <class T>
 void TVector<T>::erase(Iterator start, Iterator end) {
-    if (start.get_index() > end.get_index()) {
+    if ((start.get_ptr() - _data) > (end.get_ptr() - _data)) {
         throw std::invalid_argument("Invalid range");
     }
-    for (size_t i = start.get_index(); i < end.get_index(); ++i) {
+    for (size_t i = (start.get_ptr() - _data); i < (end.get_ptr() - _data); ++i) {
         if (_states[i] == BUSY) {
             _states[i] = DELETED;
             _size--;
@@ -886,10 +1070,10 @@ void TVector<T>::erase(Iterator start, Iterator end) {
 
 template <class T>
 void TVector<T>::erase(Iterator start, size_t count) {
-    if ((start.get_index() + count) >= _capacity) {
+    if (((start.get_ptr() - _data) + count) >= _capacity) {
         throw std::invalid_argument("Invalid range");
     }
-    for (size_t i = start.get_index(); i < (start.get_index() + count); ++i) {
+    for (size_t i = (start.get_ptr() - _data); i < ((start.get_ptr() - _data) + count); ++i) {
         if (_states[i] == BUSY) {
             _states[i] = DELETED;
             _size--;

@@ -9,6 +9,7 @@ class Stack {
 public:
     Stack();
     Stack(int size);
+    ~Stack();
     Stack(const Stack<T>& other);
     void push(T val);
     void pop();
@@ -21,7 +22,14 @@ public:
 };
 
 template<class T>
-Stack<T>::Stack() : _size(0), _top(-1), _data(nullptr) {}
+Stack<T>::Stack() : _size(20), _top(-1) {
+    _data = new T[_size];
+}
+
+template<class T>
+Stack<T>::~Stack() {
+    delete[] _data;
+}
 
 template<class T>
 Stack<T>::Stack(int size) {

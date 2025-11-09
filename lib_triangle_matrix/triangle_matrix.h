@@ -16,6 +16,7 @@ public:
     Triangle_matrix();
     Triangle_matrix(size_t N);
     Triangle_matrix(const Math_vector<Math_vector<T>>&);
+    Triangle_matrix(const Matrix<T>& other);
     Triangle_matrix(const Triangle_matrix&);
     size_t get_n() const;
     Triangle_matrix<T>& operator=(const Triangle_matrix& other);
@@ -55,12 +56,24 @@ Triangle_matrix<T>::Triangle_matrix(const Math_vector<Math_vector<T>>& other) : 
 }
 
 template <class T>
+Triangle_matrix<T>::Triangle_matrix(const Matrix<T>& other) : Matrix<T>(other), _N(0) {
+    if (this->get_rows() > 0) {
+        _N = this->get_rows();
+        for (size_t i = 0; i < _N; i++) {
+            if ((*this)[i].size() != (_N - i)) {
+                throw std::invalid_argument("Invalid triangle matrix dimensions");
+            }
+        }
+    }
+}
+
+template <class T>
 Triangle_matrix<T>::Triangle_matrix(const Triangle_matrix& other) : Matrix<T>(other), _N(other._N) {}
 
 template <class T>
 Triangle_matrix<T>& Triangle_matrix<T>::operator=(const Triangle_matrix& other) {
     if (this != &other) {
-        Matrix<T>::operator=(other);
+        this->Matrix<T>::operator=(other);
         _N = other._N;
     }
     return *this;
@@ -69,9 +82,10 @@ Triangle_matrix<T>& Triangle_matrix<T>::operator=(const Triangle_matrix& other) 
 template <class T>
 Triangle_matrix<T> Triangle_matrix<T>::operator*(T val) {
     Triangle_matrix result(_N);
-    for (size_t i = 0; i < _N; i++) {
+    result = this->Matrix<T>::operator*(val);
+    /*for (size_t i = 0; i < _N; i++) {
         result[i] = (*this)[i] * val;
-    }
+    }*/
     return result;
 }
 
@@ -82,6 +96,7 @@ Triangle_matrix<T> Triangle_matrix<T>::operator+(const Triangle_matrix& other) {
     }
 
     Triangle_matrix result(_N);
+    //result = this->Matrix<T>::operator+(other);
     for (size_t i = 0; i < _N; i++) {
         result[i] = (*this)[i] + other[i];
     }
@@ -95,6 +110,7 @@ Triangle_matrix<T> Triangle_matrix<T>::operator-(const Triangle_matrix& other) {
     }
 
     Triangle_matrix result(_N);
+    //result = this->Matrix<T>::operator-(other);
     for (size_t i = 0; i < _N; i++) {
         result[i] = (*this)[i] - other[i];
     }
@@ -118,7 +134,6 @@ Triangle_matrix<T> Triangle_matrix<T>::operator*(const Triangle_matrix<T>& matr)
         }
     }
     return result;
-    return Triangle_matrix<T>();
 }
 
 template <class T>
